@@ -1,25 +1,36 @@
 package org.dci.woltjuniorsoftwareengineer.service
 
 import org.dci.woltjuniorsoftwareengineer.exception.CustomException
-import org.dci.woltjuniorsoftwareengineer.exception.ExternalApiException
 import org.dci.woltjuniorsoftwareengineer.model.*
+import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.stereotype.Service
 import kotlin.math.*
 
 @Service
-class DeliveryOrderPriceService {
+class DeliveryOrderPriceService(
+    @Autowired private val venueStaticService: VenueStaticService,
+    @Autowired private val venueDynamicService: VenueDynamicService
+) {
+
+    fun getDeliveryOrderPrice(
+        deliveryOrderPriceRequest: DeliveryOrderPriceRequest
+    ): DeliveryOrderPriceResponse {
+        val venueStaticData = venueStaticService.getStaticData(deliveryOrderPriceRequest.venueSlug)
+        val venueDynamicData = venueDynamicService.getDynamicData(deliveryOrderPriceRequest.venueSlug)
+        return calculateDeliveryOrderPrice(deliveryOrderPriceRequest, venueStaticData, venueDynamicData)
+    }
 
     fun calculateDeliveryOrderPrice(
-
         value: DeliveryOrderPriceRequest,
-        staticData: VenueStaticData?,
-        dynamicData: VenueDynamicData?
+        venueStaticData: VenueStaticData?,
+        venueDynamicData: VenueDynamicData?
     ): DeliveryOrderPriceResponse {
 
-        val smallOrderSurcharge = getSmallOrderSurcharge(dynamicData, value)
-        val deliveryDistance = findDistance(staticData!!, value)
-        val indexOfApplicableRange = findApplicableRange(deliveryDistance, dynamicData!!.distanceRanges)
-        val deliveryFee = getDeliveryFee(dynamicData, indexOfApplicableRange, deliveryDistance)
+        val smallOrderSurcharge = getSmallOrderSurcharge(venueDynamicData, value)
+        val deliveryDistance = findDistance(venueStaticData!!, value)
+        val indexOfApplicableRange = findApplicableRange(deliveryDistance, venueDynamicData!!.distanceRanges)
+        val deliveryFee = getDeliveryFee(venueDynamicData, indexOfApplicableRange, deliveryDistance)
         val delivery = Delivery(deliveryFee, deliveryDistance)
         val totalPrice = getTotalPrice(value, smallOrderSurcharge, deliveryFee)
 

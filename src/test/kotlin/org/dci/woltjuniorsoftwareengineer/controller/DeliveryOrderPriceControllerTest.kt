@@ -48,7 +48,11 @@ class DeliveryOrderPriceControllerTest {
         // Mocking the service responses
         Mockito.`when`(venueStaticService.getStaticData(venueSlug)).thenReturn(staticData)
         Mockito.`when`(venueDynamicService.getDynamicData(venueSlug)).thenReturn(dynamicData)
-        Mockito.`when`(deliveryOrderPriceService.calculateDeliveryOrderPrice(deliveryOrderPriceRequest, staticData, dynamicData))
+        Mockito.`when`(deliveryOrderPriceService.calculateDeliveryOrderPrice(
+            deliveryOrderPriceRequest,
+            venueStaticData,
+            venueDynamicData
+        ))
             .thenReturn(expectedPrice)
 
         val response: ResponseEntity<Any> = deliveryOrderPriceController.getDeliveryOrderPrice(

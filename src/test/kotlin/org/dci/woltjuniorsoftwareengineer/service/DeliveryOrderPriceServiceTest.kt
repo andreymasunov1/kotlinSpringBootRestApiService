@@ -8,7 +8,7 @@ import org.junit.jupiter.api.assertThrows
 
 class DeliveryOrderPriceServiceTest {
 
-    private val deliveryOrderPriceService = DeliveryOrderPriceService()
+    private val deliveryOrderPriceService = DeliveryOrderPriceService(null, null)
 
     @Test
     fun `calculateDeliveryOrderPrice should return correct response values for border values`() {
@@ -34,7 +34,11 @@ class DeliveryOrderPriceServiceTest {
         )
 
         // When
-        val response = deliveryOrderPriceService.calculateDeliveryOrderPrice(request, staticData, dynamicData)
+        val response = deliveryOrderPriceService.calculateDeliveryOrderPrice(
+            request,
+            venueStaticData,
+            venueDynamicData
+        )
 
         // Then
         assertEquals(1190.0, response.totalPrice)
@@ -67,7 +71,11 @@ class DeliveryOrderPriceServiceTest {
         )
 
         // When
-        val response = deliveryOrderPriceService.calculateDeliveryOrderPrice(request, staticData, dynamicData)
+        val response = deliveryOrderPriceService.calculateDeliveryOrderPrice(
+            request,
+            venueStaticData,
+            venueDynamicData
+        )
 
         // Then
         assertEquals(1190.0, response.totalPrice)
